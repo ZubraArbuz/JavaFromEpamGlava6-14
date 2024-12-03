@@ -1,7 +1,5 @@
-package org.example.chapter7.test;
+package org.example.chapter7;
 
-import org.example.chapter7.User;
-import org.example.chapter7.UserManager;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;

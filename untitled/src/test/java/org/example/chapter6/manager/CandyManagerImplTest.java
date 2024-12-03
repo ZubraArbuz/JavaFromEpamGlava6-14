@@ -1,6 +1,5 @@
-package org.example.chapter6.test.manager;
+package org.example.chapter6.manager;
 
-import org.example.chapter6.manager.CandyManagerImpl;
 import org.example.chapter6.model.Candy;
 import org.example.chapter6.model.Chocolate;
 import org.junit.jupiter.api.BeforeEach;
