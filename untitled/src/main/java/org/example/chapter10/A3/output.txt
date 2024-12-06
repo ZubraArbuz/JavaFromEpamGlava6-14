@@ -1,0 +1,4 @@
+apple
+orange
+elephant
+umbrella

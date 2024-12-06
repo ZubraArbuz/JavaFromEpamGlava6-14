@@ -1,0 +1,4 @@
+2.3;en-US
+3;de-DE
+abc;en-US
+4,5;fr-FR
