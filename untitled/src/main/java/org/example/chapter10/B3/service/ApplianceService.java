@@ -7,13 +7,12 @@ import java.util.Comparator;
 import java.util.List;
 
 public class ApplianceService {
-    private List<ElectricalAppliance> appliances; // Хранилище в памяти
+    private List<ElectricalAppliance> appliances;
 
     public ApplianceService() {
-        appliances = new ArrayList<>(); // Инициализация списка
+        appliances = new ArrayList<>();
     }
 
-    // Добавить прибор
     public void addAppliance(ElectricalAppliance appliance) {
         appliances.add(appliance);
     }
@@ -22,7 +21,6 @@ public class ApplianceService {
         return appliances;
     }
 
-    // Подсчитать общую потребляемую мощность
     public int calculateTotalPower() {
         return appliances.stream()
                 .filter(ElectricalAppliance::isOn)
@@ -30,13 +28,11 @@ public class ApplianceService {
                 .sum();
     }
 
-    // Сортировка приборов по мощности
     public List<ElectricalAppliance> sortByPower() {
         appliances.sort(Comparator.comparingInt(ElectricalAppliance::getPower));
         return appliances;
     }
 
-    // Поиск прибора по диапазону мощности
     public List<ElectricalAppliance> findByPowerRange(int minPower, int maxPower) {
         List<ElectricalAppliance> result = new ArrayList<>();
         for (ElectricalAppliance appliance : appliances) {

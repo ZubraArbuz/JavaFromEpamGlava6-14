@@ -7,7 +7,6 @@ import java.util.List;
 
 public class ApplianceFileConnector {
 
-    // Сохранение списка приборов в файл
     public void saveToFile(String fileName, List<ElectricalAppliance> appliances) {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(fileName))) {
             oos.writeObject(appliances);
@@ -17,8 +16,6 @@ public class ApplianceFileConnector {
         }
     }
 
-    // Загрузка списка приборов из файла
-    @SuppressWarnings("unchecked")
     public List<ElectricalAppliance> loadFromFile(String fileName) {
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(fileName))) {
             return (List<ElectricalAppliance>) ois.readObject();

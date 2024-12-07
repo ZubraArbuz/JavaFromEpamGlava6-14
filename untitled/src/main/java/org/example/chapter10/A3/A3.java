@@ -25,7 +25,6 @@ public class A3 {
             List<String> lines = Files.readAllLines(Paths.get(inputFilePath));
             List<String> vowelWords = new ArrayList<>();
             for (String line : lines) {
-                // Разделение строки на слова и фильтрация по начальной гласной букве
                 List<String> words = Arrays.stream(line.split("\\s+"))
                         .filter(word -> word.matches("^[AEIOUaeiouАЕЁИОУЫЭЮЯаеёиоуыэюя].*"))
                         .collect(Collectors.toList());
