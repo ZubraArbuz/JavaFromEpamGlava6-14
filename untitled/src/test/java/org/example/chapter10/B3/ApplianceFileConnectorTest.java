@@ -39,17 +39,13 @@ class ApplianceFileConnectorTest {
 
     @Test
     void testSaveAndLoad() {
-        // Сохранение объектов в файл
         fileConnector.saveToFile(fileName, appliances);
 
-        // Проверяем, что файл был создан
         File file = new File(fileName);
         assertTrue(file.exists(), "Файл для сериализации не был создан");
 
-        // Загрузка объектов из файла
         List<ElectricalAppliance> loadedAppliances = fileConnector.loadFromFile(fileName);
 
-        // Проверка, что данные совпадают
         assertNotNull(loadedAppliances, "Загруженные данные не должны быть null");
         assertEquals(appliances.size(), loadedAppliances.size(), "Размер списка загруженных объектов не совпадает");
 
@@ -65,18 +61,14 @@ class ApplianceFileConnectorTest {
 
     @Test
     void testSaveWithEmptyList() {
-        // Сохранение пустого списка
         List<ElectricalAppliance> emptyList = new ArrayList<>();
         fileConnector.saveToFile(fileName, emptyList);
 
-        // Проверяем, что файл был создан
         File file = new File(fileName);
         assertTrue(file.exists(), "Файл для сериализации пустого списка не был создан");
 
-        // Загрузка из файла
         List<ElectricalAppliance> loadedAppliances = fileConnector.loadFromFile(fileName);
 
-        // Проверка, что список пуст
         assertNotNull(loadedAppliances, "Загруженные данные не должны быть null");
         assertTrue(loadedAppliances.isEmpty(), "Список загруженных объектов должен быть пустым");
     }
