@@ -1,0 +1,28 @@
+
+CREATE TABLE Classrooms (
+    id SERIAL PRIMARY KEY,
+    room_number VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE Subjects (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    time VARCHAR(255) NOT NULL,
+    classroom_id INT NOT NULL,
+    FOREIGN KEY (classroom_id) REFERENCES Classrooms(id)
+);
+
+CREATE TABLE Teachers (
+    id SERIAL PRIMARY KEY,
+    full_name VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE TeacherSubjects (
+    teacher_id INT NOT NULL,
+    subject_id INT NOT NULL,
+    weekly_classes INT NOT NULL,
+    students_per_class INT NOT NULL,
+    PRIMARY KEY (teacher_id, subject_id),
+    FOREIGN KEY (teacher_id) REFERENCES Teachers(id),
+    FOREIGN KEY (subject_id) REFERENCES Subjects(id)
+);
