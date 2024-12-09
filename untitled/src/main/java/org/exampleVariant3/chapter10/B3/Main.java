@@ -9,7 +9,7 @@ public class Main {
     public static void main(String[] args) {
         ApplianceService service = new ApplianceService();
         ApplianceFileConnector fileConnector = new ApplianceFileConnector();
-        String fileName = "C:/sd/appliances.dat";
+        String fileName = "untitled/src/main/java/org/exampleVariant3/chapter10/B3/appliances.dat";
 
         service.addAppliance(new Fridge("Холодильник", 200));
         service.addAppliance(new TV("Телевизор", 150));

@@ -1,19 +1,30 @@
 package org.exampleVariant3.chapter10.C3;
+
 import java.io.*;
 
 public class C3 {
     public static void main(String[] args) {
-        File sourceFile = new File("D:/3/Java/Glava6/untitled/src/main/java/org/example/chapter10/C3/sourceCode.java");
-        File directory = new File("D:/3/Java/Glava6/untitled/src/test/java/org/example/chapter10/C3/outputDirectory");
+        File sourceFile = new File("untitled/src/main/java/org/exampleVariant3/chapter10/C3/sourceCode.java");
+        File directory = new File("untitled/src/main/java/org/exampleVariant3/chapter10/C3/outputDirectory");
+
+        createDirectory(directory);
+        File reversedFile = new File(directory, "reversedCode.java");
+
+        reverseFileLines(sourceFile, reversedFile);
+    }
+
+    public static void createDirectory(File directory) {
         if (!directory.exists()) {
             directory.mkdirs();
         }
-        File reversedFile = new File(directory, "reversedCode.java");
+    }
+
+    public static void reverseFileLines(File sourceFile, File targetFile) {
         try (BufferedReader reader = new BufferedReader(new FileReader(sourceFile));
-             BufferedWriter writer = new BufferedWriter(new FileWriter(reversedFile))) {
+             BufferedWriter writer = new BufferedWriter(new FileWriter(targetFile))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                String reversedLine = new StringBuilder(line).reverse().toString();
+                String reversedLine = reverseString(line);
                 writer.write(reversedLine);
                 writer.newLine();
             }
@@ -21,5 +32,9 @@ public class C3 {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static String reverseString(String line) {
+        return new StringBuilder(line).reverse().toString();
     }
 }

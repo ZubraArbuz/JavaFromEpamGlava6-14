@@ -19,7 +19,7 @@ public class A3 {
     }
 
     public static void main(String[] args) {
-        String directoryPath = "C:/3kurs/java/glava11/untitled";
+        String directoryPath = "untitled/src/main/java/org/exampleVariant3/chapter11/";
         A3 a3 = new A3();
         try {
             List<Path> allPaths = a3.getAllPaths(directoryPath);

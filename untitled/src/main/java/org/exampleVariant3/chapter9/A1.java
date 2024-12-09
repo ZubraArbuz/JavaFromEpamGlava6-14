@@ -70,7 +70,7 @@ public class A1 {
     }
 
     public static void main(String[] args) {
-        String filePath = "D:\\3\\Java\\Glava6\\untitled\\src\\main\\java\\org\\example\\chapter9\\file.txt";
+        String filePath = "untitled/src/main/java/org/exampleVariant3/chapter9/file.txt";
         processFile(filePath);
     }
 }
