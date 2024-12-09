@@ -9,6 +9,12 @@ public class Toffee extends Candy {
 
     @Override
     public void specialMethod() {
-        System.out.println("Ирис очень тягучий");
+        //количество молока показывает насколько ирис тягучий
+        long milkCount = getIngredients().stream().filter(ingredient -> ingredient.equalsIgnoreCase("Молоко")).count();
+        if (milkCount > 1) {
+            System.out.println("Этот ирис очень тягучий благодаря большому количеству молока.");
+        } else {
+            System.out.println("Этот ирис умеренно тягучий.");
+        }
     }
 }

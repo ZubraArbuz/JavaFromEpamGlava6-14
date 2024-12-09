@@ -9,6 +9,12 @@ public class Lollipop extends Candy {
 
     @Override
     public void specialMethod() {
-        System.out.println("Имеет форму петуха");
+        //количество сахара показывает насколько леденец сладкий
+        long sugarCount = getIngredients().stream().filter(ingredient -> ingredient.equalsIgnoreCase("Сахар")).count();
+        if (sugarCount > 2) {
+            System.out.println("Этот леденец очень сладкий, так как содержит много сахара!");
+        } else {
+            System.out.println("Этот леденец имеет сбалансированный вкус.");
+        }
     }
 }

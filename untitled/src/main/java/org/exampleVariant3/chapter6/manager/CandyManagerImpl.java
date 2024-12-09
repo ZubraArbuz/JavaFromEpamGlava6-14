@@ -5,17 +5,27 @@ import org.exampleVariant3.chapter6.model.Chocolate;
 import org.exampleVariant3.chapter6.model.Lollipop;
 import org.exampleVariant3.chapter6.model.Toffee;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class CandyManagerImpl implements CandyManager {
     private List<Candy> candies = new ArrayList<>();
-    private List<String> ingredients = new ArrayList<>();
 
     @Override
     public void produceCandyBatch(String type, int quantity) {
-        System.out.printf("Произведено %d сладости типа %s.%n", quantity, type);
+        boolean candyExists = false;
+        for (Candy candy : candies) {
+            if (candy.getName().equalsIgnoreCase(type)) {
+                candyExists = true;
+                break;
+            }
+        }
+
+        if (candyExists) {
+            System.out.printf("Произведено %d сладости типа %s.%n", quantity, type);
+        } else {
+            System.out.println("Сладость типа " + type + " не найдена в производстве.");
+        }
     }
 
     @Override
@@ -45,11 +55,19 @@ public class CandyManagerImpl implements CandyManager {
 
     @Override
     public void addNewIngredient(String ingredient) {
-        if (!ingredients.contains(ingredient)) {
-            ingredients.add(ingredient);
-            System.out.println("Ингридиент добавлен: " + ingredient);
+        boolean addIngredient = false;
+
+        for (Candy candy : candies) {
+            if (!candy.getIngredients().contains(ingredient)) {
+                candy.addIngredient(ingredient);
+                addIngredient = true;
+            }
+        }
+
+        if (addIngredient) {
+            System.out.println("Ингредиент добавлен: " + ingredient);
         } else {
-            System.out.println("Ингридиент уже добавлен.");
+            System.out.println("Ингредиент уже содержится во всех сладостях.");
         }
     }
 
@@ -83,8 +101,5 @@ public class CandyManagerImpl implements CandyManager {
 
     public List<Candy> getCandies() {
         return candies;
-    }
-    public List<String> getIngredients() {
-        return ingredients;
     }
 }

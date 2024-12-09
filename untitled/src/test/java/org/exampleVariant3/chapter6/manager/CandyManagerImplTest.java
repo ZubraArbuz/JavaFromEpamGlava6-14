@@ -72,14 +72,27 @@ public class CandyManagerImplTest {
 
     @Test
     void testAddNewIngredient() {
-        String ingredient = "молоко";
+        candyManager.createNewCandyType("Шоколад", "Россия", new String[]{"Сахар", "Какао"}, 50.0);
+        candyManager.createNewCandyType("Леденец", "Китай", new String[]{"Сахар", "Вода"}, 10.0);
+
+        String ingredient = "Молоко";
 
         candyManager.addNewIngredient(ingredient);
-        assertTrue(candyManager.getIngredients().contains(ingredient));
 
-        // Попытка добавить тот же ингредиент
+        for (Candy candy : candyManager.getCandies()) {
+            assertTrue(candy.getIngredients().contains(ingredient),
+                    "Ингредиент не добавлен в сладость: " + candy.getName());
+        }
+
         candyManager.addNewIngredient(ingredient);
-        assertEquals(1, candyManager.getIngredients().size());
+
+        for (Candy candy : candyManager.getCandies()) {
+            long ingredientCount = candy.getIngredients().stream()
+                    .filter(i -> i.equals(ingredient))
+                    .count();
+            assertEquals(1, ingredientCount,
+                    "Ингредиент добавлен повторно в сладость: " + candy.getName());
+        }
     }
 
     @Test
