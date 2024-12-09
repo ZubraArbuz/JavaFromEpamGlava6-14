@@ -45,7 +45,6 @@ public class CandyManagerImplTest {
 
         candyManager.createNewCandyType(type, manufacturer, ingredients, price);
 
-        // Обновление конфеты
         String[] newIngredients = {"сахар", "вода", "вишня"};
         candyManager.addOrUpdateCandy(type, manufacturer, 60.0, newIngredients);
 
@@ -103,8 +102,6 @@ public class CandyManagerImplTest {
         double price = 100.0;
 
         candyManager.createNewCandyType(type, manufacturer, ingredients, price);
-
-        // Проверяем вывод по производителю
         candyManager.getProductInfoByManufacturer(manufacturer);
     }
 
