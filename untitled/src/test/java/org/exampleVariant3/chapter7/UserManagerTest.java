@@ -22,7 +22,7 @@ class UserManagerTest {
         users.add(new User(6, "Frank", 27, "Canada"));
         users.add(new User(7, "George", 40, "Canada"));
 
-        users.sort(User.byCountryAndAge());
+        UserManager.sortUsers(users);
 
         List<User> expectedOrder = List.of(
                 new User(6, "Frank", 27, "Canada"),
@@ -51,9 +51,7 @@ class UserManagerTest {
 
         int minAge = 30;
         char initial = 'G';
-        List<User> filteredUsers = users.stream()
-                .filter(user -> user.getAge() > minAge && user.getName().charAt(0) == initial)
-                .collect(Collectors.toList());
+        List<User> filteredUsers = UserManager.filterUsers(users, minAge, initial);
 
         assertEquals(2, filteredUsers.size());
 
@@ -63,7 +61,6 @@ class UserManagerTest {
         assertTrue(filteredIds.contains(2));
         assertTrue(filteredIds.contains(4));
     }
-
 
     @Test
     void testFindMinAndMaxAgeAmongFilteredUsers() {
@@ -77,9 +74,9 @@ class UserManagerTest {
 
         int minAge = 30;
         char initial = 'G';
-        List<User> filteredUsers = users.stream()
-                .filter(user -> user.getAge() > minAge && user.getName().charAt(0) == initial)
-                .collect(Collectors.toList());
+        List<User> filteredUsers = UserManager.filterUsers(users, minAge, initial);
+
+        UserManager.findMaxAndMin(filteredUsers);
 
         User maxAgeUser = filteredUsers.stream().max(Comparator.comparing(User::getAge)).orElseThrow();
         User minAgeUser = filteredUsers.stream().min(Comparator.comparing(User::getAge)).orElseThrow();
@@ -98,9 +95,7 @@ class UserManagerTest {
 
         int minAge = 30;
         char initial = 'G';
-        List<User> filteredUsers = users.stream()
-                .filter(user -> user.getAge() > minAge && user.getName().charAt(0) == initial)
-                .collect(Collectors.toList());
+        List<User> filteredUsers = UserManager.filterUsers(users, minAge, initial);
 
         assertTrue(filteredUsers.isEmpty());
     }
