@@ -12,8 +12,10 @@ public class Main {
         ParkingLot parkingLot = new ParkingLot(parkingCapacity);
         ExecutorService executorService = Executors.newFixedThreadPool(carsCount);
 
+        long startTime = System.currentTimeMillis();
+
         for (int i = 1; i <= carsCount; i++) {
-            executorService.execute(new Car("Машина " + i, parkingLot, maxWaitTime));
+            executorService.execute(new Car("Машина " + i, parkingLot, maxWaitTime, startTime));
         }
 
         executorService.shutdown();
