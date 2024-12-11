@@ -29,14 +29,14 @@ public class Main {
                     String day = scanner.nextLine();
                     System.out.println("Введите номер аудитории (например, 101):");
                     String classroom = scanner.nextLine();
-                    List<String> results = getTeachersByDayAndClassroom(connection, day, classroom);
-                    results.forEach(System.out::println);
+                    List<Teacher> teachers = getTeachersByDayAndClassroom(connection, day, classroom);
+                    teachers.forEach(System.out::println);
                 }
                 case 2 -> {
                     System.out.println("Введите день недели (например, Monday):");
                     String day = scanner.nextLine();
-                    List<String> results = getTeachersNotWorkingOnDay(connection, day);
-                    results.forEach(System.out::println);
+                    List<Teacher> teachers = getTeachersNotWorkingOnDay(connection, day);
+                    teachers.forEach(System.out::println);
                 }
                 case 3 -> {
                     System.out.println("Введите количество занятий:");
@@ -68,38 +68,42 @@ public class Main {
         }
     }
 
-    public static List<String> getTeachersByDayAndClassroom(Connection connection, String day, String classroom) {
+    public static List<Teacher> getTeachersByDayAndClassroom(Connection connection, String day, String classroom) {
         String query = """
-            SELECT t.full_name, s.name, s.time, c.room_number
+            SELECT t.id, t.full_name, s.name AS subject_name, s.time, c.room_number
             FROM Teachers t
             JOIN TeacherSubjects ts ON t.id = ts.teacher_id
             JOIN Subjects s ON ts.subject_id = s.id
             JOIN Classrooms c ON s.classroom_id = c.id
             WHERE s.time LIKE ? AND c.room_number = ?;
         """;
-        List<String> results = new ArrayList<>();
+        List<Teacher> teachers = new ArrayList<>();
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, day + "%");
             statement.setString(2, classroom);
             ResultSet resultSet = statement.executeQuery();
 
             while (resultSet.next()) {
-                String result = String.format("Преподаватель: %s, Предмет: %s, Время: %s, Аудитория: %s",
-                        resultSet.getString("full_name"),
-                        resultSet.getString("name"),
+                Teacher teacher = new Teacher(
+                        resultSet.getInt("id"),
+                        resultSet.getString("full_name")
+                );
+                teacher.addSubject(new Subject(
+                        resultSet.getString("subject_name"),
                         resultSet.getString("time"),
-                        resultSet.getString("room_number"));
-                results.add(result);
+                        new Classroom(resultSet.getString("room_number"))
+                ));
+                teachers.add(teacher);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return results;
+        return teachers;
     }
 
-    public static List<String> getTeachersNotWorkingOnDay(Connection connection, String day) {
+    public static List<Teacher> getTeachersNotWorkingOnDay(Connection connection, String day) {
         String query = """
-            SELECT t.full_name 
+            SELECT t.id, t.full_name
             FROM Teachers t
             WHERE t.id NOT IN (
                 SELECT ts.teacher_id
@@ -108,18 +112,22 @@ public class Main {
                 WHERE s.time LIKE ?
             );
         """;
-        List<String> results = new ArrayList<>();
+        List<Teacher> teachers = new ArrayList<>();
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, day + "%");
             ResultSet resultSet = statement.executeQuery();
 
             while (resultSet.next()) {
-                results.add("Преподаватель не работает: " + resultSet.getString("full_name"));
+                Teacher teacher = new Teacher(
+                        resultSet.getInt("id"),
+                        resultSet.getString("full_name")
+                );
+                teachers.add(teacher);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return results;
+        return teachers;
     }
 
     public static List<String> getDaysWithSpecificClassCount(Connection connection, int classCount) {
@@ -192,3 +200,9 @@ public class Main {
         return false;
     }
 }
+
+
+
+
+
+
