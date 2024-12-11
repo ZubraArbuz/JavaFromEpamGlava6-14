@@ -31,7 +31,7 @@ public class Main {
         manager.createNewCandyType("Шоколад", "Россия", new String[]{"Сахар", "Какао", "Молоко"}, 10.5);
         manager.createNewCandyType("Леденец", "Китай", new String[]{"Сахар", "Вода"}, 5.0);
 
-        manager.addNewIngredient("Ванилин");
+        manager.addNewIngredient("Шоколад","Ванилин");
 
         manager.getProductInfoByManufacturer("Россия");
         manager.getProductInfoByManufacturer("Китай");

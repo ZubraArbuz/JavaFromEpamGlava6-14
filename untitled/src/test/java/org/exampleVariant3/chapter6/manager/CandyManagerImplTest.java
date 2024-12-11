@@ -75,24 +75,46 @@ public class CandyManagerImplTest {
         candyManager.createNewCandyType("Леденец", "Китай", new String[]{"Сахар", "Вода"}, 10.0);
 
         String ingredient = "Молоко";
+        candyManager.addNewIngredient("Леденец", ingredient);
 
-        candyManager.addNewIngredient(ingredient);
-
+        boolean isIngredientAddedToLollipop = false;
+        boolean isIngredientAddedToChocolate = false;
         for (Candy candy : candyManager.getCandies()) {
-            assertTrue(candy.getIngredients().contains(ingredient),
-                    "Ингредиент не добавлен в сладость: " + candy.getName());
+            if (candy.getName().equalsIgnoreCase("Леденец")) {
+                isIngredientAddedToLollipop = candy.getIngredients().contains(ingredient);
+            }
+            if (candy.getName().equalsIgnoreCase("Шоколад")) {
+                isIngredientAddedToChocolate = candy.getIngredients().contains(ingredient);
+            }
         }
 
-        candyManager.addNewIngredient(ingredient);
+        assertTrue(isIngredientAddedToLollipop, "Ингредиент не добавлен в леденец");
+        assertFalse(isIngredientAddedToChocolate, "Ингредиент добавлен в шоколад, хотя не должен был");
+
+        candyManager.addNewIngredient("Леденец", ingredient);
 
         for (Candy candy : candyManager.getCandies()) {
-            long ingredientCount = candy.getIngredients().stream()
-                    .filter(i -> i.equals(ingredient))
-                    .count();
-            assertEquals(1, ingredientCount,
-                    "Ингредиент добавлен повторно в сладость: " + candy.getName());
+            if (candy.getName().equalsIgnoreCase("Леденец")) {
+                long ingredientCount = candy.getIngredients().stream()
+                        .filter(i -> i.equals(ingredient))
+                        .count();
+                assertEquals(1, ingredientCount, "Ингредиент добавлен повторно в леденец");
+            }
         }
+
+        String newIngredient = "Молоко";
+        candyManager.addNewIngredient("Шоколад", newIngredient);
+
+        boolean isNewIngredientAddedToChocolate = false;
+        for (Candy candy : candyManager.getCandies()) {
+            if (candy.getName().equalsIgnoreCase("Шоколад")) {
+                isNewIngredientAddedToChocolate = candy.getIngredients().contains(newIngredient);
+            }
+        }
+
+        assertTrue(isNewIngredientAddedToChocolate, "Ингредиент не добавлен в шоколад");
     }
+
 
     @Test
     void testGetProductInfoByManufacturer() {

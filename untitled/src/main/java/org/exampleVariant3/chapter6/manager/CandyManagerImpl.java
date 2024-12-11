@@ -54,22 +54,21 @@ public class CandyManagerImpl implements CandyManager {
     }
 
     @Override
-    public void addNewIngredient(String ingredient) {
-        boolean addIngredient = false;
-
+    public void addNewIngredient(String type, String ingredient) {
         for (Candy candy : candies) {
-            if (!candy.getIngredients().contains(ingredient)) {
-                candy.addIngredient(ingredient);
-                addIngredient = true;
+            if (candy.getName().equalsIgnoreCase(type)) {
+                if (!candy.getIngredients().contains(ingredient)) {
+                    candy.addIngredient(ingredient);
+                    System.out.printf("Ингредиент '%s' добавлен в сладость '%s'.%n", ingredient, type);
+                } else {
+                    System.out.printf("Ингредиент '%s' уже содержится в сладости '%s'.%n", ingredient, type);
+                }
+                return;
             }
         }
-
-        if (addIngredient) {
-            System.out.println("Ингредиент добавлен: " + ingredient);
-        } else {
-            System.out.println("Ингредиент уже содержится во всех сладостях.");
-        }
+        System.out.printf("Сладость '%s' не найдена.%n", type);
     }
+
 
     @Override
     public void createNewCandyType(String type, String manufacturer, String[] newIngredients, double price) {
