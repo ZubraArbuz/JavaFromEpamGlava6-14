@@ -1,6 +1,8 @@
 package org.exampleVariant3.chapter13;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class Main {
@@ -8,6 +10,7 @@ public class Main {
         String url = "jdbc:postgresql://localhost:5432/schedule_db";
         String user = "postgres";
         String password = "q1w2e3";
+
         try (Connection connection = DriverManager.getConnection(url, user, password)) {
             Scanner scanner = new Scanner(System.in);
             System.out.println("Выберите действие:");
@@ -16,35 +19,46 @@ public class Main {
             System.out.println("3. Найти дни недели с заданным количеством занятий");
             System.out.println("4. Найти дни недели с заданным количеством аудиторий");
             System.out.println("5. Перенести первое занятие на последнее место");
+
             int choice = scanner.nextInt();
             scanner.nextLine();
+
             switch (choice) {
                 case 1 -> {
                     System.out.println("Введите день недели (например, Monday):");
                     String day = scanner.nextLine();
                     System.out.println("Введите номер аудитории (например, 101):");
                     String classroom = scanner.nextLine();
-                    getTeachersByDayAndClassroom(connection, day, classroom);
+                    List<String> results = getTeachersByDayAndClassroom(connection, day, classroom);
+                    results.forEach(System.out::println);
                 }
                 case 2 -> {
                     System.out.println("Введите день недели (например, Monday):");
                     String day = scanner.nextLine();
-                    getTeachersNotWorkingOnDay(connection, day);
+                    List<String> results = getTeachersNotWorkingOnDay(connection, day);
+                    results.forEach(System.out::println);
                 }
                 case 3 -> {
                     System.out.println("Введите количество занятий:");
                     int classCount = scanner.nextInt();
-                    getDaysWithSpecificClassCount(connection, classCount);
+                    List<String> results = getDaysWithSpecificClassCount(connection, classCount);
+                    results.forEach(System.out::println);
                 }
                 case 4 -> {
                     System.out.println("Введите количество аудиторий:");
                     int roomCount = scanner.nextInt();
-                    getDaysWithSpecificRoomCount(connection, roomCount);
+                    List<String> results = getDaysWithSpecificRoomCount(connection, roomCount);
+                    results.forEach(System.out::println);
                 }
                 case 5 -> {
                     System.out.println("Введите день недели (например, Monday):");
                     String day = scanner.nextLine();
-                    shiftFirstClassToLast(connection, day);
+                    boolean success = shiftFirstClassToLast(connection, day);
+                    if (success) {
+                        System.out.println("Первое занятие в день " + day + " перенесено на последнее место.");
+                    } else {
+                        System.out.println("Занятия для переноса не найдены.");
+                    }
                 }
                 default -> System.out.println("Неверный выбор");
             }
@@ -54,7 +68,7 @@ public class Main {
         }
     }
 
-    public static void getTeachersByDayAndClassroom(Connection connection, String day, String classroom) {
+    public static List<String> getTeachersByDayAndClassroom(Connection connection, String day, String classroom) {
         String query = """
             SELECT t.full_name, s.name, s.time, c.room_number
             FROM Teachers t
@@ -63,24 +77,27 @@ public class Main {
             JOIN Classrooms c ON s.classroom_id = c.id
             WHERE s.time LIKE ? AND c.room_number = ?;
         """;
+        List<String> results = new ArrayList<>();
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, day + "%");
             statement.setString(2, classroom);
             ResultSet resultSet = statement.executeQuery();
 
             while (resultSet.next()) {
-                System.out.println("Преподаватель: " + resultSet.getString("full_name"));
-                System.out.println("Предмет: " + resultSet.getString("name"));
-                System.out.println("Время: " + resultSet.getString("time"));
-                System.out.println("Аудитория: " + resultSet.getString("room_number"));
-                System.out.println();
+                String result = String.format("Преподаватель: %s, Предмет: %s, Время: %s, Аудитория: %s",
+                        resultSet.getString("full_name"),
+                        resultSet.getString("name"),
+                        resultSet.getString("time"),
+                        resultSet.getString("room_number"));
+                results.add(result);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return results;
     }
 
-    public static void getTeachersNotWorkingOnDay(Connection connection, String day) {
+    public static List<String> getTeachersNotWorkingOnDay(Connection connection, String day) {
         String query = """
             SELECT t.full_name 
             FROM Teachers t
@@ -91,38 +108,45 @@ public class Main {
                 WHERE s.time LIKE ?
             );
         """;
+        List<String> results = new ArrayList<>();
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, day + "%");
             ResultSet resultSet = statement.executeQuery();
 
             while (resultSet.next()) {
-                System.out.println("Преподаватель не работает: " + resultSet.getString("full_name"));
+                results.add("Преподаватель не работает: " + resultSet.getString("full_name"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return results;
     }
 
-    public static void getDaysWithSpecificClassCount(Connection connection, int classCount) {
+    public static List<String> getDaysWithSpecificClassCount(Connection connection, int classCount) {
         String query = """
             SELECT s.time, COUNT(s.id) AS class_count
             FROM Subjects s
             GROUP BY s.time
             HAVING COUNT(s.id) = ?;
         """;
+        List<String> results = new ArrayList<>();
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, classCount);
             ResultSet resultSet = statement.executeQuery();
 
             while (resultSet.next()) {
-                System.out.println("День: " + resultSet.getString("time") + ", Class Count: " + resultSet.getInt("class_count"));
+                String result = String.format("День: %s, Количество занятий: %d",
+                        resultSet.getString("time"),
+                        resultSet.getInt("class_count"));
+                results.add(result);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return results;
     }
 
-    public static void getDaysWithSpecificRoomCount(Connection connection, int roomCount) {
+    public static List<String> getDaysWithSpecificRoomCount(Connection connection, int roomCount) {
         String query = """
             SELECT s.time, COUNT(DISTINCT c.id) AS room_count
             FROM Subjects s
@@ -130,19 +154,24 @@ public class Main {
             GROUP BY s.time
             HAVING COUNT(DISTINCT c.id) = ?;
         """;
+        List<String> results = new ArrayList<>();
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, roomCount);
             ResultSet resultSet = statement.executeQuery();
 
             while (resultSet.next()) {
-                System.out.println("День: " + resultSet.getString("time") + ", Room Count: " + resultSet.getInt("room_count"));
+                String result = String.format("День: %s, Количество аудиторий: %d",
+                        resultSet.getString("time"),
+                        resultSet.getInt("room_count"));
+                results.add(result);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return results;
     }
 
-    public static void shiftFirstClassToLast(Connection connection, String day) {
+    public static boolean shiftFirstClassToLast(Connection connection, String day) {
         String query = """
             UPDATE Subjects
             SET time = CONCAT(time, ' (shifted)')
@@ -156,14 +185,10 @@ public class Main {
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, day + "%");
             int updatedRows = statement.executeUpdate();
-
-            if (updatedRows > 0) {
-                System.out.println("Первое занятие в день " + day + " перенесено на последнее место.");
-            } else {
-                System.out.println("Занятия для переноса не найдены.");
-            }
+            return updatedRows > 0;
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return false;
     }
 }
